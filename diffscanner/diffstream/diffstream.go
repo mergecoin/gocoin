@@ -5,7 +5,7 @@ import (
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
 	"github.com/ventureharbour/gocoin/scorer"
 	"log"
-  "regexp"
+	"regexp"
 	"strings"
 
 	"github.com/bluekeyes/go-gitdiff/gitdiff"
@@ -69,6 +69,7 @@ func (s *DiffStream) GenerateScore(lineAlgorithm scorer.LineScoreAlgorithm, prea
 	scoring := scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
+
 
 	total := 0.0
 

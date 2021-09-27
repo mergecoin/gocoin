@@ -1,4 +1,4 @@
-package scorer
+package mint_scorer
 
 import "github.com/bluekeyes/go-gitdiff/gitdiff"
 

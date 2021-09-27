@@ -1,6 +1,15 @@
 package main
 
+import (
+	"fmt"
+	"github.com/ventureharbour/gocoin/functions"
+)
+
 func main() {
+	//{"org": "ventureharbour", "repo": "truenorth", "pull": "12", "token": "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"}
+	weight, _ := functions.CalculateCommitWeights("ventureharbour", "truenorth", "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", 507)
+
+	fmt.Printf("weight %v", weight)
 	//stream := diffstream.NewDiffStream(retrieve.Retrieve(
 	//	"ventureharbour",
 	//	"mergecoin",

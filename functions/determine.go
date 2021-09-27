@@ -3,8 +3,8 @@ package functions
 import (
 	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
 	"github.com/ventureharbour/gocoin/retrieve"
-	"github.com/ventureharbour/gocoin/scorer/lines"
-	"github.com/ventureharbour/gocoin/scorer/preambles"
+	"github.com/ventureharbour/gocoin/mint_scorer/lines"
+	"github.com/ventureharbour/gocoin/mint_scorer/preambles"
 )
 
 // Determines an amount of mergecoin for a given PR
@@ -13,7 +13,7 @@ func Determine(org, project, token string, pull int) float64 {
 		org,
 		project,
 		pull,
-		token))
+		token, retrieve.Commits))
 
 	stream.InitializeData()
 

@@ -3,7 +3,7 @@ package diffstream
 import (
 	"bufio"
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
-	"github.com/ventureharbour/gocoin/scorer"
+	"github.com/ventureharbour/gocoin/mint_scorer"
 	"log"
 	"regexp"
 	"strings"
@@ -65,8 +65,8 @@ func (s *DiffStream) InitializeData() {
 	s.Info = stats
 }
 
-func (s *DiffStream) GenerateScore(lineAlgorithm scorer.LineScoreAlgorithm, preambleAlgorithm scorer.PreambleScoreAlgorithm) float64 {
-	scoring := scorer.LineScorer{}
+func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm) float64 {
+	scoring := mint_scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
 

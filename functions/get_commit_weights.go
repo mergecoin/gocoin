@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"github.com/google/go-github/v39/github"
 	"github.com/ventureharbour/gocoin/commitscanner"
+	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
+	"github.com/ventureharbour/gocoin/mint_scorer/lines"
+	"github.com/ventureharbour/gocoin/mint_scorer/preambles"
 	"github.com/ventureharbour/gocoin/retrieve"
 	"encoding/json"
 	"golang.org/x/net/context"
@@ -31,15 +34,25 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 
 	s, _, _ := client.Repositories.GetCommitRaw(ctx, org, repo, element.Sha, github.RawOptions{
 		Type: github.Patch,
-	})
-	fmt.Println("got commit raw %v", s)
-	return 1.0
+	});
+
+	stream := diffstream.NewDiffStream([]byte(s))
+
+	stream.InitializeData()
+
+	return stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{})
 }
 
 func CalculateCommitWeights(org, project, token string, pull int) (string, error) {
 	commits := commitscanner.Commits{}
-	jsonString := string(retrieve.Retrieve(org, project, pull, token, retrieve.Commits))
-	err := commits.FromJson(jsonString)
+	jsonVal, err := retrieve.Retrieve(org, project, pull, token, retrieve.Commits)
+
+	if err != nil {
+		return "", fmt.Errorf("error retrieving commits %v", err)
+	}
+
+	jsonString := string(jsonVal)
+	err = commits.FromJson(jsonString)
 	if err != nil {
 		return "", fmt.Errorf("cannot unmarshal commits json %v", err)
 	}

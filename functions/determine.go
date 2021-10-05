@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"fmt"
 	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
 	"github.com/ventureharbour/gocoin/retrieve"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
@@ -8,12 +9,18 @@ import (
 )
 
 // Determines an amount of mergecoin for a given PR
-func Determine(org, project, token string, pull int) float64 {
-	stream := diffstream.NewDiffStream(retrieve.Retrieve(
+func DeterminePullRequestWorth(org, project, token string, pull int) (float64, error) {
+	retrieved, err := retrieve.Retrieve(
 		org,
 		project,
 		pull,
-		token, retrieve.Commits))
+		token, retrieve.Commits);
+
+	if err != nil {
+		return 0.0, fmt.Errorf("retrieve commits %v", err)
+	}
+
+	stream := diffstream.NewDiffStream(retrieved)
 
 	stream.InitializeData()
 
@@ -35,5 +42,5 @@ func Determine(org, project, token string, pull int) float64 {
 	//fmt.Println("\n-----PREAMBLE-----\n %s", stream.Info.Preamble)
 	//fmt.Println("\n----TOTAL SCORE FOR THIS PULL REQUEST----\n", stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{}))
 
-	return stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{})
+	return stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{}), nil
 }

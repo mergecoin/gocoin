@@ -21,7 +21,7 @@ type result struct {
 	err error
 }
 
-func Retrieve(org, project string, pull int, token string, kind Kind) []byte {
+func Retrieve(org, project string, pull int, token string, kind Kind) ([]byte, error) {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -54,11 +54,10 @@ func Retrieve(org, project string, pull int, token string, kind Kind) []byte {
 	}
 
 	if retrievalResult.err != nil {
-		fmt.Println("err fail on err check for patches")
-		fmt.Errorf("error getting patches %v", retrievalResult.err)
+		return []byte(""), fmt.Errorf("error getting patches %v", retrievalResult.err)
 	}
 
-	return []byte(retrievalResult.result)
+	return []byte(retrievalResult.result), nil
 }
 
 func getPatches(org string, project string, pull int, client *github.Client, ctx context.Context) (string, *github.Response, error) {

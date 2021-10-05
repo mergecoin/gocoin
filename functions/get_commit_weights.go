@@ -8,7 +8,6 @@ import (
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
 	"github.com/ventureharbour/gocoin/mint_scorer/preambles"
 	"github.com/ventureharbour/gocoin/retrieve"
-	"encoding/json"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 )
@@ -43,18 +42,18 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 	return stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{})
 }
 
-func CalculateCommitWeights(org, project, token string, pull int) (string, error) {
+func CalculateCommitWeights(org, project, token string, pull int) (map[string]float64, error) {
 	commits := commitscanner.Commits{}
 	jsonVal, err := retrieve.Retrieve(org, project, pull, token, retrieve.Commits)
 
 	if err != nil {
-		return "", fmt.Errorf("error retrieving commits %v", err)
+		return nil, fmt.Errorf("error retrieving commits %v", err)
 	}
 
 	jsonString := string(jsonVal)
 	err = commits.FromJson(jsonString)
 	if err != nil {
-		return "", fmt.Errorf("cannot unmarshal commits json %v", err)
+		return nil, fmt.Errorf("cannot unmarshal commits json %v", err)
 	}
 
 	cMap := make(map[string]float64)
@@ -75,11 +74,5 @@ func CalculateCommitWeights(org, project, token string, pull int) (string, error
 		cMap2[key] = element/sum * 100
 	}
 
-	v, err := json.Marshal(cMap2)
-
-	if err != nil {
-		return "", fmt.Errorf("unable to marshal weight json %v", err)
-	}
-
-	return string(v), nil
+	return cMap2, nil
 }

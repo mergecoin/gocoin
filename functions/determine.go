@@ -14,7 +14,7 @@ func DeterminePullRequestWorth(org, project, token string, pull int) (float64, e
 		org,
 		project,
 		pull,
-		token, retrieve.Commits);
+		token, retrieve.Patches);
 
 	if err != nil {
 		return 0.0, fmt.Errorf("retrieve commits %v", err)

@@ -22,7 +22,6 @@ type CommitWeights struct {
 }
 
 func determineCommitWeight(element commitscanner.CommitShard, token, org, repo string) float64 {
-	//TODO do something mor complex with these commits
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -39,7 +38,7 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 
 	stream.InitializeData()
 
-	return stream.GenerateScore(&lines.UnimplementedLineScorerExample{}, &preambles.UnimplementedPreambleScorerExample{})
+	return stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
 }
 
 func CalculateCommitWeights(org, project, token string, pull int) (map[string]float64, error) {

@@ -24,7 +24,9 @@ func (s *Statistic) applyExtension(extension string) {
 }
 
 func (s *Statistic) applyFragments(fragments []*gitdiff.TextFragment) {
-	s.Fragments = fragments
+	//fmt.Println("prev", len(s.Fragments))
+	s.Fragments = append(s.Fragments, fragments...)
+	//fmt.Println("after", len(s.Fragments))
 }
 
 func (s *Statistic) incrementEdit() {
@@ -49,7 +51,10 @@ func (s *DiffInfo) AddDiffPreamble(preamble string) {
 }
 
 func (s *DiffInfo) InitFileStatistic(file string) {
-	s.Data[fmt.Sprintf(file)] = &Statistic{}
+	_, ok := s.Data[fmt.Sprintf(file)]
+	if !ok {
+		s.Data[fmt.Sprintf(file)] = &Statistic{}
+	}
 }
 
 func (s *DiffInfo) IncrementEdits(file string) {

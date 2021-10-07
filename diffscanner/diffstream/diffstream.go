@@ -4,6 +4,7 @@ import (
 	"bufio"
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
 	"github.com/ventureharbour/gocoin/mint_scorer"
+	"github.com/ventureharbour/gocoin/mint_scorer/lines"
 	"log"
 	"regexp"
 	"strings"
@@ -72,11 +73,21 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 
 
 	total := 0.0
+	prevLine := lines.LineContents{}
 
 	for _, dataPoint := range s.Info.Data {
 		for _, fragment := range dataPoint.Fragments {
 			for _, line := range fragment.Lines {
-				total += scoring.LineScorer.ScoreLine(line.Line, dataPoint.Extension, line.Op)
+				// indicates that this Line is not a context Line in the patch
+				if line.Op != 0 {
+					contents := lines.LineContents{
+						Line:      strings.TrimSpace(line.Line),
+						Extension: dataPoint.Extension,
+						Op:        line.Op,
+					}
+					total += scoring.LineScorer.ScoreLine(contents, prevLine)
+					prevLine = contents
+				}
 			}
 		}
 	}

@@ -1,9 +1,11 @@
 package mint_scorer
 
-import "github.com/bluekeyes/go-gitdiff/gitdiff"
+import (
+	"github.com/ventureharbour/gocoin/mint_scorer/lines"
+)
 
 type LineScoreAlgorithm interface {
-	ScoreLine(line string, extension string, op gitdiff.LineOp) float64
+	ScoreLine(contents, prevLine lines.LineContents) float64
 }
 
 type PreambleScoreAlgorithm interface {

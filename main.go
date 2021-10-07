@@ -7,7 +7,8 @@ import (
 
 func main() {
 	//{"org": "ventureharbour", "repo": "truenorth", "pull": "12", "token": "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"}
-	weight, err := functions.CalculateCommitWeights("ventureharbour", "truenorth", "xxxxxxxx", 590)
+	//weight, err := functions.CalculateCommitWeights("ventureharbour", "truenorth", "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", 590)
+	weight, err := functions.DeterminePullRequestWorth("ventureharbour", "truenorth", "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", 583)
 
 	if err != nil {
 		fmt.Println(err)

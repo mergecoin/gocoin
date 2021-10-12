@@ -35,7 +35,6 @@ func (w *Weighting) IncreaseScore(amount float64) {
 }
 
 func getCommentWeight(body string, reactions *github.Reactions) float64 {
-	fmt.Println(body)
 	weight := 1
 	positiveReactionCount := reactions.GetHeart() + reactions.GetHooray() + reactions.GetPlusOne() + reactions.GetRocket()
 	negativeReactionCount := reactions.GetMinusOne() + reactions.GetConfused()
@@ -67,7 +66,8 @@ func CalculateReviewAndCommentWeight(org, project, token string, pull int) (map[
 	comments, _, err := client.PullRequests.ListComments(ctx, org, project, pull, &commentArgs);
 
 	if err != nil {
-		fmt.Printf("err %v", err)
+		fmt.Printf("error retreiving comments: %v", err)
+		return nil, err
 	}
 
 	weight := make(map[int64]*Weighting)
@@ -101,8 +101,6 @@ func CalculateReviewAndCommentWeight(org, project, token string, pull int) (map[
 			}
 		}
 	}
-	//client.PullRequests.ListReviews();
-	//client.PullRequests.ListReviewComments();
 
 	combined := make(map[string]*Score)
 	for _, comment := range weight {
@@ -116,6 +114,26 @@ func CalculateReviewAndCommentWeight(org, project, token string, pull int) (map[
 		}
 	}
 
+	reviews, _, err := client.PullRequests.ListReviews(ctx, org, project, pull, nil);
+
+	if err != nil {
+		fmt.Printf("error retreiving reviews: %v", err)
+		return nil, err
+	}
+
+	for _, review := range reviews {
+		if review.GetState() == "APPROVED" {
+			comment, ok := combined[review.GetUser().GetLogin()]
+			if ok {
+				comment.Increase(comment.Value * 2.0)
+			} else {
+				combined[review.GetUser().GetLogin()] = &Score{
+					Value: 5.0,
+				}
+			}
+		}
+	}
+
 	sum := 0.0
 	for _, s := range combined {
 		sum += s.Value
@@ -125,8 +143,6 @@ func CalculateReviewAndCommentWeight(org, project, token string, pull int) (map[
 	for key, val := range combined {
 		result[key] = (val.Value / sum) * 100.0
 	}
-
-	fmt.Println(result)
 
 	return result, nil
 }

@@ -20,7 +20,7 @@ type DeterminationConfig struct {
 }
 
 // Get determination!!
-func Determine(org, project, token string, pull int, configuration []byte) (determination Determinator, err error) {
+func Determine(org, project, token string, pull int, age uint, configuration []byte) (determination Determinator, err error) {
 	determination = Determinator{
 		Awards: make(map[string]int64),
 	}
@@ -46,7 +46,7 @@ func Determine(org, project, token string, pull int, configuration []byte) (dete
 		return determination, fmt.Errorf("unable to retrieve commit weights %v", err)
 	}
 
-	value, err := DeterminePullRequestWorth(org, project, token, pull)
+	value, err := DeterminePullRequestWorth(org, project, token, pull, age)
 	if err != nil {
 		return determination, fmt.Errorf("unable to retrieve pr worth %v", err)
 	}

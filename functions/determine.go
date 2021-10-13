@@ -2,11 +2,12 @@ package functions
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
 	"github.com/ventureharbour/gocoin/mint_scorer/preambles"
 	"github.com/ventureharbour/gocoin/retrieve"
-	"math"
 )
 
 // Determines that dropped off value of a PR based on the weight of the changeset
@@ -30,8 +31,17 @@ func dropoff(changes float64) float64 {
 	}
 }
 
+// returns a
+func ageOfPr(age uint, currentValue float64) float64 {
+	val := currentValue * (1.08 * math.Exp(-0.08*float64(age)))
+	if val < 1 {
+		return 1
+	}
+	return val
+}
+
 // Determines an amount of mergecoin for a given PR
-func DeterminePullRequestWorth(org, project, token string, pull int) (float64, error) {
+func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (float64, error) {
 	retrieved, err := retrieve.Retrieve(
 		org,
 		project,
@@ -48,5 +58,7 @@ func DeterminePullRequestWorth(org, project, token string, pull int) (float64, e
 
 	changeWeights := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
 
-	return dropoff(changeWeights), nil
+	totalValue := dropoff((changeWeights))
+
+	return ageOfPr(age, totalValue), nil
 }

@@ -68,13 +68,11 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		award, ok := determination.Awards[reviewer]
 		if ok {
 			newValue := float64(award) + amountToReviewers*(weight/100.0)
-			award = int64(math.Round(newValue))
+			award = int64(math.Round(newValue)) + 1
 		} else {
-			determination.Awards[reviewer] = int64(math.Round(amountToReviewers * (weight / 100.0)))
+			determination.Awards[reviewer] = int64(math.Round(amountToReviewers*(weight/100.0))) + 1
 		}
 	}
-
-	fmt.Println(determination)
 
 	return determination, err
 }

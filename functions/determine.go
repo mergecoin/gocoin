@@ -2,7 +2,11 @@ package functions
 
 import (
 	"fmt"
+	"github.com/google/go-github/v39/github"
+	"golang.org/x/net/context"
+	"golang.org/x/oauth2"
 	"math"
+	"time"
 
 	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
@@ -40,6 +44,27 @@ func ageOfPr(age uint, currentValue float64) float64 {
 	return val
 }
 
+func numberOfComments(org, project, token string, pull int) (int, error) {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
+
+	commentArgs := github.PullRequestListCommentsOptions{
+		Sort:        "created",
+		Direction:   "desc",
+		Since:       time.Time{},
+		ListOptions: github.ListOptions{},
+	}
+
+	comments, _, err := client.PullRequests.ListComments(ctx, org, project, pull, &commentArgs)
+
+	return len(comments), err
+}
+
 // Determines an amount of mergecoin for a given PR
 func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (float64, error) {
 	retrieved, err := retrieve.Retrieve(
@@ -60,5 +85,10 @@ func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (
 
 	totalValue := dropoff((changeWeights))
 
-	return ageOfPr(age, totalValue), nil
+	numberOfComments, err := numberOfComments(org, project, token, pull)
+	if err != nil {
+		return 0.0, fmt.Errorf("retrieve comments %v", err)
+	}
+
+	return ageOfPr(age, totalValue) + float64(numberOfComments), nil
 }

@@ -18,7 +18,7 @@ const (
 
 type result struct {
 	result string
-	err error
+	err    error
 }
 
 func Retrieve(org, project string, pull int, token string, kind Kind) ([]byte, error) {
@@ -35,22 +35,24 @@ func Retrieve(org, project string, pull int, token string, kind Kind) ([]byte, e
 		err:    nil,
 	}
 
+	//_, _ := regexp.Compile(`.*(:coin)\s*:\s*.*`)
+
 	switch kind {
 	case Patches:
 		patches, _, err := getPatches(org, project, pull, client, ctx)
 		retrievalResult.result = patches
 		retrievalResult.err = err
-		break;
+		break
 	case Commits:
 		commits, err := getCommits(org, project, pull, client, ctx)
 		retrievalResult.result = commits
 		retrievalResult.err = err
-		break;
-	case Comments:
-		reviews, _, err := getReviews(org, project, pull, client, ctx)
-		retrievalResult.result = reviews
-		retrievalResult.err = err
-		break;
+		break
+		//case Comments:
+		//	comments, _, err := getComments(org, project, pull, client, ctx)
+		//	retrievalResult.result = comments
+		//	retrievalResult.err = err
+		//	break;
 	}
 
 	if retrievalResult.err != nil {
@@ -88,9 +90,10 @@ func getCommits(org string, project string, pull int, client *github.Client, ctx
 	return string(b), err
 }
 
-func getReviews(org string, project string, pull int, client *github.Client, ctx context.Context) (string, *github.Response, error) {
-	patches, response, err := client.PullRequests.GetRaw(ctx, org, project, pull, github.RawOptions{
-		Type: github.Patch,
-	})
-	return patches, response, err
-}
+//todo this needs to be implemented some time, and the current version in `get_review_weights` needs to be replaced
+//func getReviews(org string, project string, pull int, client *github.Client, ctx context.Context) (string, *github.Response, error) {
+//	patches, response, err := client.PullRequests.GetRaw(ctx, org, project, pull, github.RawOptions{
+//		Type: github.Patch,
+//	})
+//	return patches, response, err
+//}

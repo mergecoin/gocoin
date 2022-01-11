@@ -64,7 +64,8 @@ func Retrieve(org, project string, pull int, token string, kind Kind) ([]byte, e
 
 func getPatches(org string, project string, pull int, client *github.Client, ctx context.Context) (string, *github.Response, error) {
 	patches, response, err := client.PullRequests.GetRaw(ctx, org, project, pull, github.RawOptions{
-		Type: github.Patch,
+		//replace to github.Diff from github.Patches after I realised they're nOT THE SAME THING!!
+		Type: github.Diff,
 	})
 	return patches, response, err
 }

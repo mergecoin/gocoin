@@ -81,7 +81,7 @@ func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (
 
 	stream.InitializeData()
 
-	total, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
+	total, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
 
 	changeWeights := total
 

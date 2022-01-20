@@ -38,7 +38,7 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 
 	stream.InitializeData()
 
-	changes, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
+	changes, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
 
 	return changes + preamble
 }

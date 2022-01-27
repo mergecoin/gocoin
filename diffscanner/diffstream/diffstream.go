@@ -68,7 +68,7 @@ func (s *DiffStream) InitializeData() {
 	s.Info = stats
 }
 
-func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm) (float64, float64) {
+func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm, config functions.DeterminationConfig) (float64, float64) {
 	scoring := mint_scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
@@ -77,7 +77,7 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 	preambleExtra := 0.0
 	prevLine := lines.LineContents{}
 
-	ignoredFileNames := []string{"package-lock.json","assets/html/", "build"}
+	ignoredFileNames := config.IgnoreFiles.Names
 
 	fmt.Println(ignoredFileNames)
 

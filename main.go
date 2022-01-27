@@ -12,7 +12,7 @@ func main() {
 	// weight, err := functions.DeterminePullRequestWorth("ventureharbour", "truenorth", "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", 545, 1)
 	// weight, err := functions.DeterminePullRequestWorth("ventureharbour", "ventureharbour.com", "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", 43, 1)
 
-	weight, err := functions.Determine("ventureharbour", "ventureharbour.com", "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", 43, 1, []byte(`{"split": {"contribute": "60","review": "40"}, "ignored": {"ignored": ["assets/html"]}}`))
+	weight, err := functions.Determine("ventureharbour", "ventureharbour.com", "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", 43, 1, []byte(`{"split": {"contribute": "60","review": "40"}, "ignored": {"ignored": ["assets/html"]}}`))
 
 	if err != nil {
 		fmt.Println(err)

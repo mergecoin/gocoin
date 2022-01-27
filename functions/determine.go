@@ -66,7 +66,7 @@ func numberOfComments(org, project, token string, pull int) (int, error) {
 }
 
 // Determines an amount of mergecoin for a given PR
-func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (float64, error) {
+func DeterminePullRequestWorth(org, project, token string, pull int, age uint, config DeterminationConfig) (float64, error) {
 	retrieved, err := retrieve.Retrieve(
 		org,
 		project,
@@ -81,7 +81,7 @@ func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (
 
 	stream.InitializeData()
 
-	total, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
+	total, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{}, config)
 
 	changeWeights := total
 

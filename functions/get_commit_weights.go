@@ -21,7 +21,7 @@ type CommitWeights struct {
 	Weights []CommitWeight
 }
 
-func determineCommitWeight(element commitscanner.CommitShard, token, org, repo string) float64 {
+func determineCommitWeight(element commitscanner.CommitShard, token, org, repo string, config DeterminationConfig) float64 {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -38,12 +38,12 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 
 	stream.InitializeData()
 
-	changes, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
+	changes, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{}, config)
 
 	return changes + preamble
 }
 
-func CalculateCommitWeights(org, project, token string, pull int) (map[string]float64, error) {
+func CalculateCommitWeights(org, project, token string, pull int, config DeterminationConfig) (map[string]float64, error) {
 	commits := commitscanner.Commits{}
 	jsonVal, err := retrieve.Retrieve(org, project, pull, token, retrieve.Commits)
 
@@ -60,7 +60,7 @@ func CalculateCommitWeights(org, project, token string, pull int) (map[string]fl
 	cMap := make(map[string]float64)
 
 	for _, element := range commits.Pool {
-		value := determineCommitWeight(element, token, org, project)
+		value := determineCommitWeight(element, token, org, project, config)
 		cMap[element.Author.Login] += value
 	}
 

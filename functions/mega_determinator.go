@@ -24,13 +24,6 @@ type DeterminationConfig struct {
 	Ignored IgnoreFiles `json:"ignored"`
 }
 
-func Sample(args ...string) {
-	for _, arg := range args {
-		fmt.Println(arg)
-	}
-}
-
-
 // Get determination!!
 func Determine(org, project, token string, pull int, age uint, configuration []byte) (determination Determinator, err error) {
 	determination = Determinator{
@@ -43,11 +36,15 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 			Contribute: 75,
 		},
 		Ignored: IgnoreFiles{
-			Names: []string{"package-lock.json"},
+			Names: []string{},
 		},
 	}
 
+
 	err = json.Unmarshal(configuration, &config)
+
+
+	fmt.Println("configuration: ", config)
 
 	if err != nil {
 		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
@@ -58,12 +55,12 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		return determination, fmt.Errorf("unable to retrieve review weights %v", err)
 	}
 
-	commitWeight, err := CalculateCommitWeights(org, project, token, pull)
+	commitWeight, err := CalculateCommitWeights(org, project, token, pull, config)
 	if err != nil {
 		return determination, fmt.Errorf("unable to retrieve commit weights %v", err)
 	}
 
-	value, err := DeterminePullRequestWorth(org, project, token, pull, age)
+	value, err := DeterminePullRequestWorth(org, project, token, pull, age, config)
 	if err != nil {
 		return determination, fmt.Errorf("unable to retrieve pr worth %v", err)
 	}

@@ -29,8 +29,6 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 
 	err = json.Unmarshal(configuration, &config)
 
-	fmt.Println("configuration: ", config)
-
 	if err != nil {
 		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
 	}

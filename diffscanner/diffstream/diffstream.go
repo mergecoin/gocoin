@@ -2,7 +2,6 @@ package diffstream
 
 import (
 	"bufio"
-	"fmt"
 	"github.com/ventureharbour/gocoin/config"
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
 	"github.com/ventureharbour/gocoin/mint_scorer"
@@ -79,8 +78,6 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 	prevLine := lines.LineContents{}
 
 	ignoredFileNames := config.Ignored.Names
-
-	fmt.Println(ignoredFileNames)
 
 	for _, dataPoint := range s.Info.Data {
 		if !utils.Includes(dataPoint.Name, ignoredFileNames...) {

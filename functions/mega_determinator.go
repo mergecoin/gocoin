@@ -15,9 +15,21 @@ type Split struct {
 	Contribute uint8 `json:"contribute,string"`
 }
 
+type IgnoreFiles struct {
+	Names []string `json:"ignored"`
+}
+
 type DeterminationConfig struct {
 	Split Split `json:"split"`
+	Ignored IgnoreFiles `json:"ignored"`
 }
+
+func Sample(args ...string) {
+	for _, arg := range args {
+		fmt.Println(arg)
+	}
+}
+
 
 // Get determination!!
 func Determine(org, project, token string, pull int, age uint, configuration []byte) (determination Determinator, err error) {
@@ -30,8 +42,13 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 			Review:     25,
 			Contribute: 75,
 		},
+		Ignored: IgnoreFiles{
+			Names: []string{"package-lock.json"},
+		},
 	}
+
 	err = json.Unmarshal(configuration, &config)
+
 	if err != nil {
 		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
 	}

@@ -9,6 +9,7 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"fmt"
 
 	"github.com/bluekeyes/go-gitdiff/gitdiff"
 )
@@ -76,12 +77,12 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 	preambleExtra := 0.0
 	prevLine := lines.LineContents{}
 
-	ignoredFileNames := []string{
-		"package-lock.json",
-	}
+	ignoredFileNames := []string{"package-lock.json","assets/html/", "build"}
+
+	fmt.Println(ignoredFileNames)
 
 	for _, dataPoint := range s.Info.Data {
-		if !utils.Includes(ignoredFileNames, dataPoint.Name) {
+		if !utils.Includes(dataPoint.Name, ignoredFileNames...) {
 			for _, fragment := range dataPoint.Fragments {
 				for _, line := range fragment.Lines {
 					// indicates that this Line is not a context Line in the patch

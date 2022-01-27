@@ -9,7 +9,10 @@ import (
 func main() {
 	//{"org": "ventureharbour", "repo": "truenorth", "pull": "12", "token": "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"}
 	//weight, err := functions.CalculateCommitWeights("ventureharbour", "truenorth", "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", 590)
-	weight, err := functions.DeterminePullRequestWorth("ventureharbour", "truenorth", "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", 545, 1)
+	// weight, err := functions.DeterminePullRequestWorth("ventureharbour", "truenorth", "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", 545, 1)
+	// weight, err := functions.DeterminePullRequestWorth("ventureharbour", "ventureharbour.com", "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", 43, 1)
+
+	weight, err := functions.Determine("ventureharbour", "ventureharbour.com", "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", 43, 1, []byte(`{"split": {"contribute": "60","review": "40"}, "ignored": {"ignored": ["assets/html", "build", "package-lock.json"]}}`))
 
 	if err != nil {
 		fmt.Println(err)

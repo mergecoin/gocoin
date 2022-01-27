@@ -67,12 +67,13 @@ func (s *DiffStream) InitializeData() {
 	s.Info = stats
 }
 
-func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm) float64 {
+func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm) (float64, float64) {
 	scoring := mint_scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
 
 	total := 0.0
+	preambleExtra := 0.0
 	prevLine := lines.LineContents{}
 
 	ignoredFileNames := []string{
@@ -96,8 +97,7 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 				}
 			}
 		}
+		preambleExtra += scoring.PreambleScorer.ScorePreamble(s.Info.Preamble)
 	}
-
-	total += scoring.PreambleScorer.ScorePreamble(s.Info.Preamble)
-	return total
+	return total, preambleExtra
 }

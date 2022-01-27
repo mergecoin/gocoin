@@ -81,9 +81,12 @@ func DeterminePullRequestWorth(org, project, token string, pull int, age uint) (
 
 	stream.InitializeData()
 
-	changeWeights := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
+	total, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
 
-	totalValue := dropoff((changeWeights))
+	changeWeights := total
+
+	totalValue := dropoff(changeWeights)
+	totalValue += preamble
 
 	numberOfComments, err := numberOfComments(org, project, token, pull)
 	if err != nil {

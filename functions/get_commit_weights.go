@@ -13,7 +13,7 @@ import (
 )
 
 type CommitWeight struct {
-	Name string
+	Name   string
 	Weight float64
 }
 
@@ -32,13 +32,15 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 
 	s, _, _ := client.Repositories.GetCommitRaw(ctx, org, repo, element.Sha, github.RawOptions{
 		Type: github.Patch,
-	});
+	})
 
 	stream := diffstream.NewDiffStream([]byte(s))
 
 	stream.InitializeData()
 
-	return stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.UnimplementedPreambleScorerExample{})
+	changes, preamble := stream.GenerateScore(&lines.BasicLineScorer{}, &preambles.ConventionCommitPreambleScorer{})
+
+	return changes + preamble
 }
 
 func CalculateCommitWeights(org, project, token string, pull int) (map[string]float64, error) {
@@ -70,7 +72,7 @@ func CalculateCommitWeights(org, project, token string, pull int) (map[string]fl
 	cMap2 := make(map[string]float64)
 
 	for key, element := range cMap {
-		cMap2[key] = element/sum * 100
+		cMap2[key] = element / sum * 100
 	}
 
 	return cMap2, nil

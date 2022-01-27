@@ -3,20 +3,12 @@ package functions
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ventureharbour/gocoin/config"
 	"math"
 )
 
 type Determinator struct {
 	Awards map[string]int64 `json:"awards"`
-}
-
-type Split struct {
-	Review     uint8 `json:"review,string"`
-	Contribute uint8 `json:"contribute,string"`
-}
-
-type DeterminationConfig struct {
-	Split Split `json:"split"`
 }
 
 // Get determination!!
@@ -25,13 +17,18 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		Awards: make(map[string]int64),
 	}
 
-	config := DeterminationConfig{
-		Split: Split{
+	config := config.DeterminationConfig{
+		Split: config.Split{
 			Review:     25,
 			Contribute: 75,
 		},
+		Ignored: config.IgnoreFiles{
+			Names: []string{},
+		},
 	}
+
 	err = json.Unmarshal(configuration, &config)
+
 	if err != nil {
 		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
 	}
@@ -41,12 +38,12 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		return determination, fmt.Errorf("unable to retrieve review weights %v", err)
 	}
 
-	commitWeight, err := CalculateCommitWeights(org, project, token, pull)
+	commitWeight, err := CalculateCommitWeights(org, project, token, pull, config)
 	if err != nil {
 		return determination, fmt.Errorf("unable to retrieve commit weights %v", err)
 	}
 
-	value, err := DeterminePullRequestWorth(org, project, token, pull, age)
+	value, err := DeterminePullRequestWorth(org, project, token, pull, age, config)
 	if err != nil {
 		return determination, fmt.Errorf("unable to retrieve pr worth %v", err)
 	}

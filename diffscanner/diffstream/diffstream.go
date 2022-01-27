@@ -2,6 +2,7 @@ package diffstream
 
 import (
 	"bufio"
+	"github.com/ventureharbour/gocoin/config"
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
 	"github.com/ventureharbour/gocoin/mint_scorer"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
@@ -67,7 +68,7 @@ func (s *DiffStream) InitializeData() {
 	s.Info = stats
 }
 
-func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm) (float64, float64) {
+func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm, config config.DeterminationConfig) (float64, float64) {
 	scoring := mint_scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
@@ -76,12 +77,10 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 	preambleExtra := 0.0
 	prevLine := lines.LineContents{}
 
-	ignoredFileNames := []string{
-		"package-lock.json",
-	}
+	ignoredFileNames := config.Ignored.Names
 
 	for _, dataPoint := range s.Info.Data {
-		if !utils.Includes(ignoredFileNames, dataPoint.Name) {
+		if !utils.Includes(dataPoint.Name, ignoredFileNames...) {
 			for _, fragment := range dataPoint.Fragments {
 				for _, line := range fragment.Lines {
 					// indicates that this Line is not a context Line in the patch

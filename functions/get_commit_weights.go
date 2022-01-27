@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/google/go-github/v39/github"
 	"github.com/ventureharbour/gocoin/commitscanner"
+	"github.com/ventureharbour/gocoin/config"
 	"github.com/ventureharbour/gocoin/diffscanner/diffstream"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
 	"github.com/ventureharbour/gocoin/mint_scorer/preambles"
@@ -21,7 +22,7 @@ type CommitWeights struct {
 	Weights []CommitWeight
 }
 
-func determineCommitWeight(element commitscanner.CommitShard, token, org, repo string, config DeterminationConfig) float64 {
+func determineCommitWeight(element commitscanner.CommitShard, token, org, repo string, config config.DeterminationConfig) float64 {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -43,7 +44,7 @@ func determineCommitWeight(element commitscanner.CommitShard, token, org, repo s
 	return changes + preamble
 }
 
-func CalculateCommitWeights(org, project, token string, pull int, config DeterminationConfig) (map[string]float64, error) {
+func CalculateCommitWeights(org, project, token string, pull int, config config.DeterminationConfig) (map[string]float64, error) {
 	commits := commitscanner.Commits{}
 	jsonVal, err := retrieve.Retrieve(org, project, pull, token, retrieve.Commits)
 

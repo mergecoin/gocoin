@@ -2,6 +2,8 @@ package diffstream
 
 import (
 	"bufio"
+	"fmt"
+	"github.com/ventureharbour/gocoin/config"
 	diffstream "github.com/ventureharbour/gocoin/diffscanner/diffinfo"
 	"github.com/ventureharbour/gocoin/mint_scorer"
 	"github.com/ventureharbour/gocoin/mint_scorer/lines"
@@ -9,7 +11,6 @@ import (
 	"log"
 	"regexp"
 	"strings"
-	"fmt"
 
 	"github.com/bluekeyes/go-gitdiff/gitdiff"
 )
@@ -68,7 +69,7 @@ func (s *DiffStream) InitializeData() {
 	s.Info = stats
 }
 
-func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm, config functions.DeterminationConfig) (float64, float64) {
+func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm, preambleAlgorithm mint_scorer.PreambleScoreAlgorithm, config config.DeterminationConfig) (float64, float64) {
 	scoring := mint_scorer.LineScorer{}
 	scoring.SetLineScoringAlgorithm(lineAlgorithm)
 	scoring.SetPreambleScoringAlgorithm(preambleAlgorithm)
@@ -77,7 +78,7 @@ func (s *DiffStream) GenerateScore(lineAlgorithm mint_scorer.LineScoreAlgorithm,
 	preambleExtra := 0.0
 	prevLine := lines.LineContents{}
 
-	ignoredFileNames := config.IgnoreFiles.Names
+	ignoredFileNames := config.Ignored.Names
 
 	fmt.Println(ignoredFileNames)
 

@@ -3,25 +3,12 @@ package functions
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ventureharbour/gocoin/config"
 	"math"
 )
 
 type Determinator struct {
 	Awards map[string]int64 `json:"awards"`
-}
-
-type Split struct {
-	Review     uint8 `json:"review,string"`
-	Contribute uint8 `json:"contribute,string"`
-}
-
-type IgnoreFiles struct {
-	Names []string `json:"ignored"`
-}
-
-type DeterminationConfig struct {
-	Split Split `json:"split"`
-	Ignored IgnoreFiles `json:"ignored"`
 }
 
 // Get determination!!
@@ -30,19 +17,17 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		Awards: make(map[string]int64),
 	}
 
-	config := DeterminationConfig{
-		Split: Split{
+	config := config.DeterminationConfig{
+		Split: config.Split{
 			Review:     25,
 			Contribute: 75,
 		},
-		Ignored: IgnoreFiles{
+		Ignored: config.IgnoreFiles{
 			Names: []string{},
 		},
 	}
 
-
 	err = json.Unmarshal(configuration, &config)
-
 
 	fmt.Println("configuration: ", config)
 

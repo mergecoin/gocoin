@@ -1,6 +1,7 @@
 package functions
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/ventureharbour/gocoin/config"
 	"math"
@@ -26,11 +27,11 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 		},
 	}
 
-	//err = json.Unmarshal(configuration, &config)
+	err = json.Unmarshal(configuration, &config)
 
-	//if err != nil {
-	//	return determination, fmt.Errorf("unable to unmarshal config options %v", err)
-	//}
+	if err != nil {
+		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
+	}
 
 	reviewWeight, err := CalculateReviewAndCommentWeight(org, project, token, pull)
 	if err != nil {

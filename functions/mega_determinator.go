@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/ventureharbour/gocoin/config"
 	"math"
@@ -19,19 +18,19 @@ func Determine(org, project, token string, pull int, age uint, configuration []b
 
 	config := config.DeterminationConfig{
 		Split: config.Split{
-			Review:     25,
-			Contribute: 75,
+			Review:     40,
+			Contribute: 60,
 		},
 		Ignored: config.IgnoreFiles{
 			Names: []string{},
 		},
 	}
 
-	err = json.Unmarshal(configuration, &config)
+	//err = json.Unmarshal(configuration, &config)
 
-	if err != nil {
-		return determination, fmt.Errorf("unable to unmarshal config options %v", err)
-	}
+	//if err != nil {
+	//	return determination, fmt.Errorf("unable to unmarshal config options %v", err)
+	//}
 
 	reviewWeight, err := CalculateReviewAndCommentWeight(org, project, token, pull)
 	if err != nil {
